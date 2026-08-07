@@ -1,0 +1,33 @@
+baseURL = 'https://CODE-MIAO.github.io/notes/'
+locale = 'zh-cn'
+defaultContentLanguage = 'zh-cn'
+title = "Junwen's Notes"
+theme = 'hugo-book'
+
+# 首次提交后再改为 true，可显示 Last Modified
+enableGitInfo = false
+
+[params]
+  BookTheme = 'auto'
+  BookToC = true
+  BookSearch = true
+  BookSection = 'docs'
+  BookRepo = 'https://github.com/CODE-MIAO/notes'
+  BookEditPath = 'edit/main'
+  BookDateFormat = '2006-01-02'
+  BookComments = false
+  BookPortableLinks = true
+  BookMenuBundle = false
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.tableOfContents]
+  startLevel = 2
+  endLevel = 3
+
+[menu]
+  [[menu.after]]
+    name = 'GitHub'
+    url = 'https://github.com/CODE-MIAO/notes'
+    weight = 10
