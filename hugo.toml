@@ -8,7 +8,7 @@ theme = 'hugo-book'
 enableGitInfo = false
 
 [params]
-  BookTheme = 'auto'
+  BookTheme = 'notes'
   BookToC = true
   BookSearch = true
   BookSection = 'docs'

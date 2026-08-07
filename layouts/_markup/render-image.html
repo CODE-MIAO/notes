@@ -1,0 +1,17 @@
+{{- $destination := .Destination -}}
+{{- if .Page.Site.Params.BookPortableLinks -}}
+  {{- $destination = partial "docs/links/portable-image" . -}}
+{{- end -}}
+{{- $url := urls.Parse $destination -}}
+{{- /* GitHub Pages 项目站 baseURL 含 /notes/；以 / 开头的路径用 absURL 会丢子路径，需先去掉前导斜杠 */ -}}
+{{- if not $url.IsAbs -}}
+  {{- $destination = strings.TrimPrefix "/" $destination | absURL -}}
+{{- end -}}
+<img
+  src="{{ $destination | safeURL }}"
+  alt="{{ .Text }}"
+  {{ with .Title }}title="{{ . }}"{{ end }}
+  class="book-content-image"
+  loading="lazy"
+/>
+{{- /**/ -}}

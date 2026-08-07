@@ -1,0 +1,297 @@
+@import "plugins/scrollbars";
+
+// Junwen's Notes — soft slate + teal editorial look
+@mixin theme-notes {
+  --body-background: #f3f5f7;
+  --body-background-tint: linear-gradient(165deg, #e8eef2 0%, #f7f8fa 42%, #eef3f6 100%);
+  --body-font-color: #1c2430;
+
+  --color-link: #0f766e;
+  --color-visited-link: #115e59;
+
+  --icon-filter: none;
+
+  --gray-100: #e8eef2;
+  --gray-200: #d5dee6;
+  --gray-500: #6b7a8c;
+
+  --color-accent-default: #475569;
+  --color-accent-note: #0284c7;
+  --color-accent-tip: #0f766e;
+  --color-accent-important: #7c3aed;
+  --color-accent-warning: #c2410c;
+  --color-accent-caution: #b91c1c;
+
+  --color-accent-info: #0284c7;
+  --color-accent-success: #0f766e;
+  --color-accent-danger: #b91c1c;
+
+  --font-size: 17px;
+  --body-font-weight: 400;
+  --border-radius: 0.5rem;
+  --menu-width: 17.5rem;
+  --container-max-width: 100%;
+}
+
+:root {
+  --font-ui: "Source Sans 3", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-display: "Fraunces", "Source Han Serif SC", "Songti SC", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html {
+  font-family: var(--font-ui);
+}
+
+body {
+  letter-spacing: 0.01em;
+  min-height: 100vh;
+}
+
+// 关键：不要限制 .book-page 宽度，否则 main 会跟着收缩成中间一条
+main.container {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+}
+
+.book-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem !important;
+
+  a {
+    gap: 0.5rem;
+  }
+
+  span {
+    background: linear-gradient(120deg, #0f766e 0%, #134e4a 55%, #1e293b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.book-menu {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(15, 118, 110, 0.12);
+
+  .book-menu-content {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  input {
+    border: 1px solid var(--gray-200);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 999px;
+    padding: 0.55rem 0.9rem;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+  }
+
+  a {
+    border-radius: 0.4rem;
+    padding: 0.28rem 0.5rem;
+    margin: 0.05rem 0;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  a:hover {
+    background: rgba(15, 118, 110, 0.08);
+    opacity: 1;
+  }
+
+  a.active {
+    background: rgba(15, 118, 110, 0.14);
+    color: #0f766e;
+    font-weight: 600;
+  }
+}
+
+.book-header {
+  background: transparent;
+}
+
+.book-page {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 2rem 2.5rem 3rem;
+}
+
+.book-article {
+  max-width: 48rem;
+}
+
+.markdown {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    color: #0f172a;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.18);
+  }
+
+  p,
+  li {
+    line-height: 1.75;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: rgba(15, 118, 110, 0.08);
+    border-radius: 0.3rem;
+    padding: 0.1em 0.35em;
+  }
+
+  pre {
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    background: #0f172a !important;
+
+    code {
+      background: transparent;
+      color: #e2e8f0;
+      padding: 0;
+    }
+  }
+
+  blockquote {
+    border-left: 3px solid #0f766e;
+    background: rgba(15, 118, 110, 0.06);
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 0.75rem 1rem;
+    color: #334155;
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 0.6rem;
+    border: 1px solid var(--gray-200);
+
+    th {
+      background: rgba(15, 118, 110, 0.08);
+    }
+  }
+}
+
+.home-hero {
+  padding: 1.5rem 0 0.5rem;
+
+  .home-kicker {
+    margin: 0 0 0.75rem;
+    color: #0f766e;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    border: 0;
+    padding: 0;
+    margin: 0 0 0.85rem;
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    line-height: 1.15;
+  }
+
+  .home-lead {
+    margin: 0;
+    max-width: 36rem;
+    font-size: 1.125rem;
+    color: #475569;
+  }
+}
+
+.home-topics {
+  margin: 2.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+
+  a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.95rem 0;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.14);
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease, padding-left 0.15s ease;
+  }
+
+  a:hover {
+    color: #0f766e;
+    padding-left: 0.35rem;
+    text-decoration: none;
+    opacity: 1;
+  }
+
+  strong {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+  }
+
+  span {
+    color: var(--gray-500);
+    font-size: 0.95rem;
+  }
+}
+
+.book-content-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.25rem auto;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  background: #fff;
+}
+
+.book-toc {
+  nav {
+    border-left: 2px solid rgba(15, 118, 110, 0.15);
+    padding-left: 0.75rem;
+  }
+
+  a {
+    color: var(--gray-500);
+  }
+
+  a:hover,
+  a.active {
+    color: #0f766e;
+  }
+}
+
+.book-footer {
+  border-top: 1px solid rgba(15, 118, 110, 0.12);
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  color: var(--gray-500);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 56rem) {
+  .book-menu {
+    background: #f3f5f7;
+  }
+
+  .book-page {
+    padding: 1.25rem 1.1rem 2rem;
+  }
+}
