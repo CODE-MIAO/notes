@@ -152,7 +152,8 @@ main.container {
     padding: 0.1em 0.35em;
   }
 
-  pre {
+  // 代码块深色；Mermaid 图单独浅色，避免看不清
+  pre:not(.mermaid) {
     border: 1px solid var(--gray-200);
     border-radius: 0.75rem;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
@@ -162,6 +163,22 @@ main.container {
       background: transparent;
       color: #e2e8f0;
       padding: 0;
+    }
+  }
+
+  pre.mermaid {
+    background: #ffffff !important;
+    color: #1c2430;
+    border: 1px solid rgba(15, 118, 110, 0.16);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    overflow-x: auto;
+    text-align: center;
+
+    svg {
+      max-width: 100%;
+      height: auto;
     }
   }
 
