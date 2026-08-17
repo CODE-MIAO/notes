@@ -1,0 +1,12 @@
+{{- /* Hugo Book + Mermaid v11：initialize 后需显式 run */ -}}
+<pre class="mermaid">{{ .Inner | htmlEscape | safeHTML -}}</pre>
+{{- if not (.Page.Store.Get "mermaid") -}}
+  <script src="{{ "mermaid.min.js" | relURL }}"></script>
+  {{- with resources.Get "mermaid.json" | minify -}}
+  <script>
+    mermaid.initialize({{ .Content | safeJS }});
+    mermaid.run({ querySelector: ".mermaid" });
+  </script>
+  {{- end -}}
+  {{- .Page.Store.Set "mermaid" true -}}
+{{- end -}}

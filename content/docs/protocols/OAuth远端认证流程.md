@@ -2,7 +2,7 @@
 title: "OAuth远端认证流程"
 weight: 5
 ---
-#OAuth2.0标准远端认证流程
+# OAuth2.0标准远端认证流程
 
 ```mermaid
 sequenceDiagram

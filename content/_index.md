@@ -16,4 +16,5 @@ type: docs
 <li><a href="docs/mcp/"><strong>MCP</strong><span>初始化 · 路由 · 改造</span></a></li>
 <li><a href="docs/protocols/"><strong>协议与网络</strong><span>JSON-RPC · SSE · TCP · OAuth</span></a></li>
 <li><a href="docs/infra/"><strong>部署与基建</strong><span>私有化 · ES · 工具链</span></a></li>
+<li><a href="docs/web/"><strong>Web</strong><span>Nginx · 对象存储</span></a></li>
 </ul>
