@@ -279,6 +279,25 @@ main.container {
   background: #fff;
 }
 
+.book-diagram {
+  margin: 1.5rem 0 2rem;
+  padding: 0;
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f5f5f5;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+}
+
+.book-diagram__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+
 .book-toc {
   nav {
     border-left: 2px solid rgba(15, 118, 110, 0.15);

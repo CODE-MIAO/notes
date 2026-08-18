@@ -1,0 +1,13 @@
+{{- $destination := .Destination -}}
+{{- $u := urls.Parse $destination -}}
+{{- if and (not $u.IsAbs) (strings.HasPrefix $destination "/") -}}
+  {{- /* 项目站 /notes/：以 / 开头的站内链接需挂到 baseURL */ -}}
+  {{- $destination = strings.TrimPrefix "/" $destination | absURL -}}
+{{- else if and (not $u.IsAbs) .Page.Site.Params.BookPortableLinks -}}
+  {{- $destination = partial "docs/links/portable-link" . -}}
+{{- end -}}
+<a href="{{ $destination | safeURL }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+  {{- if $u.IsAbs }} target="_blank" rel="noopener"{{ end -}}
+>{{ .Text | safeHTML }}</a>
+{{- /**/ -}}

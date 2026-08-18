@@ -1,0 +1,18 @@
+{{- /*
+  内嵌 static/diagrams/<name>.html
+  用法：{{< diagram "oauth-remote-auth" >}}
+       {{< diagram "oauth-loopback" 680 >}}
+*/ -}}
+{{- $name := .Get 0 -}}
+{{- $height := default "880" (.Get 1) -}}
+{{- $src := printf "diagrams/%s.html" $name | relURL -}}
+<figure class="book-diagram">
+  <iframe
+    class="book-diagram__frame"
+    src="{{ $src }}"
+    title="{{ $name }}"
+    loading="lazy"
+    style="height: {{ $height }}px;"
+  ></iframe>
+</figure>
+{{- /**/ -}}

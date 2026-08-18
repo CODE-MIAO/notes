@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth 2.0 远端认证流程 · Sequence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper: #f5f5f5;
+      --color-paper-2: #ececec;
+      --color-ink: #2d3142;
+      --color-muted: #4f5d75;
+      --color-soft: #7a8399;
+      --color-rule: rgba(45,49,66,0.12);
+      --color-accent: #eb6c36;
+      --color-link: #2e5aa8;
+      --font-sans: 'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1100px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: var(--color-muted);
+      max-width: 62ch;
+      margin-bottom: 1.5rem;
+    }
+    .diagram-container {
+      background: var(--color-paper-2);
+      border: 1px solid var(--color-rule);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow: hidden;
+    }
+    svg { width: 100%; max-width: 100%; height: auto; display: block; background: #f5f5f5; border-radius: 6px; }
+    body.is-embed { padding: 0.25rem; min-height: 0; align-items: stretch; }
+    body.is-embed .frame { max-width: none; }
+    body.is-embed .eyebrow,
+    body.is-embed h1,
+    body.is-embed .subtitle { display: none; }
+    body.is-embed .diagram-container {
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <script>if (window.self !== window.top) document.documentElement.classList.add('js-embed');</script>
+  <script>document.addEventListener('DOMContentLoaded',function(){if(window.self!==window.top)document.body.classList.add('is-embed');});</script>
+  <div class="frame">
+    <p class="eyebrow">Sequence · Diagram Design</p>
+    <h1>OAuth 2.0 远端认证流程</h1>
+    <p class="subtitle">前置：Cursor 已探测到授权端点与 Token 端点。焦点是后端签发的 <code>access_token</code>；浏览器只经手短命 code，从不接触 token。</p>
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="oauth-remote-title oauth-remote-desc">
+        <title id="oauth-remote-title">OAuth 2.0 远端认证流程</title>
+        <desc id="oauth-remote-desc">用户、Cursor、浏览器与认证服务端之间的 OAuth 授权码流程时序图，最终由服务端返回 access_token。</desc>
+        <defs>
+          <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.9" fill="rgba(45,49,66,0.10)"/>
+          </pattern>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+          </marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/>
+          </marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/>
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+        <rect width="100%" height="100%" fill="url(#dots)" opacity="0.45"/>
+
+        <!-- Lifelines: User 120, Cursor 360, Browser 600, Auth 840 -->
+        <line x1="120" y1="132" x2="120" y2="700" stroke="rgba(45,49,66,0.22)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="360" y1="132" x2="360" y2="700" stroke="rgba(45,49,66,0.22)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="600" y1="132" x2="600" y2="700" stroke="rgba(45,49,66,0.22)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="840" y1="132" x2="840" y2="700" stroke="rgba(45,49,66,0.22)" stroke-width="1" stroke-dasharray="3,3"/>
+
+        <!-- Activation bars -->
+        <rect x="356" y="188" width="8" height="500" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+        <rect x="596" y="236" width="8" height="280" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+        <rect x="836" y="332" width="8" height="260" fill="rgba(45,49,66,0.06)" stroke="#4f5d75" stroke-width="0.8"/>
+
+        <!-- OPT frame: token exchange (msgs 8-9) -->
+        <rect x="336" y="500" width="528" height="112" rx="4" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+        <rect x="336" y="500" width="40" height="16" rx="2" fill="#f5f5f5" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+        <text x="356" y="512" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.12em">OPT</text>
+        <text x="388" y="512" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.04em">[HTTPS back-channel · code → token]</text>
+
+        <!-- Messages -->
+        <!-- 1 User -> Cursor -->
+        <line x1="120" y1="176" x2="360" y2="176" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="188" y="160" width="104" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="240" y="170" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">1 · CLICK LOGIN</text>
+
+        <!-- 2 Cursor -> Browser (link) -->
+        <line x1="360" y1="224" x2="600" y2="224" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="412" y="208" width="136" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="480" y="218" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">2 · OPEN /OAUTH/AUTHORIZE</text>
+
+        <!-- 3 Browser -> User -->
+        <line x1="600" y1="272" x2="120" y2="272" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="288" y="256" width="144" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="360" y="266" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">3 · SHOW CONSENT UI</text>
+
+        <!-- 4 User -> Browser -->
+        <line x1="120" y1="320" x2="600" y2="320" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="288" y="304" width="144" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="360" y="314" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">4 · APPROVE AUTHORIZE</text>
+
+        <!-- 5 Browser -> Auth -->
+        <line x1="600" y1="368" x2="840" y2="368" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="656" y="352" width="128" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="720" y="362" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">5 · SUBMIT AUTH FORM</text>
+
+        <!-- 6 Auth -> Browser return dashed -->
+        <line x1="840" y1="416" x2="600" y2="416" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+        <rect x="648" y="400" width="144" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="720" y="410" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">6 · 302 ?CODE=…</text>
+
+        <!-- 7 Browser -> Cursor -->
+        <line x1="600" y1="464" x2="360" y2="464" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="412" y="448" width="136" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="480" y="458" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">7 · CAPTURE LOCAL CODE</text>
+
+        <!-- 8 Cursor -> Auth inside OPT -->
+        <line x1="360" y1="536" x2="840" y2="536" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="508" y="520" width="184" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="600" y="530" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">8 · POST /OAUTH/TOKEN</text>
+
+        <!-- 9 Auth -> Cursor accent success -->
+        <line x1="840" y1="584" x2="360" y2="584" stroke="#eb6c36" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#arrow-accent)"/>
+        <rect x="508" y="568" width="184" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="600" y="578" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">9 · ACCESS_TOKEN JSON</text>
+
+        <!-- 10 Cursor -> User -->
+        <line x1="360" y1="648" x2="120" y2="648" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+        <rect x="168" y="632" width="144" height="12" rx="2" fill="#f5f5f5"/>
+        <text x="240" y="642" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">10 · UI LOGGED IN</text>
+
+        <!-- Actors -->
+        <rect x="48" y="72" width="144" height="56" rx="6" fill="#f5f5f5"/>
+        <rect x="48" y="72" width="144" height="56" rx="6" fill="rgba(79,93,117,0.10)" stroke="#7a8399" stroke-width="1"/>
+        <rect x="56" y="80" width="28" height="12" rx="2" fill="transparent" stroke="rgba(122,131,153,0.40)" stroke-width="0.8"/>
+        <text x="70" y="89" fill="#7a8399" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">USER</text>
+        <text x="120" y="104" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">用户</text>
+        <text x="120" y="119" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Human</text>
+
+        <rect x="288" y="72" width="144" height="56" rx="6" fill="#f5f5f5"/>
+        <rect x="288" y="72" width="144" height="56" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+        <rect x="296" y="80" width="36" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.22)" stroke-width="0.8"/>
+        <text x="314" y="89" fill="#7a8399" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
+        <text x="360" y="104" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Cursor</text>
+        <text x="360" y="119" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">MCP client</text>
+
+        <rect x="528" y="72" width="144" height="56" rx="6" fill="#f5f5f5"/>
+        <rect x="528" y="72" width="144" height="56" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+        <rect x="536" y="80" width="40" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.22)" stroke-width="0.8"/>
+        <text x="556" y="89" fill="#7a8399" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">WEB</text>
+        <text x="600" y="104" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">浏览器</text>
+        <text x="600" y="119" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Authorize UI</text>
+
+        <rect x="760" y="72" width="160" height="56" rx="6" fill="#f5f5f5"/>
+        <rect x="760" y="72" width="160" height="56" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+        <rect x="768" y="80" width="40" height="12" rx="2" fill="transparent" stroke="rgba(235,108,54,0.50)" stroke-width="0.8"/>
+        <text x="788" y="89" fill="#eb6c36" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AUTH</text>
+        <text x="840" y="104" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">认证服务端</text>
+        <text x="840" y="119" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Code + token</text>
+
+        <!-- Callout -->
+        <text x="48" y="736" fill="#2d3142" font-size="14" font-family="'Instrument Serif', serif" font-style="italic">Token 永不经过浏览器 — 只走 Cursor ↔ Auth 的后台通道。</text>
+
+        <!-- Legend -->
+        <line x1="48" y1="700" x2="952" y2="700" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+        <text x="48" y="720" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+        <line x1="120" y1="744" x2="160" y2="744" stroke="#2e5aa8" stroke-width="1.2"/>
+        <text x="168" y="748" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">HTTP / API</text>
+        <line x1="260" y1="744" x2="300" y2="744" stroke="#eb6c36" stroke-width="1.4"/>
+        <text x="308" y="748" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Headline success</text>
+        <line x1="440" y1="744" x2="480" y2="744" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4"/>
+        <text x="488" y="748" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Return / notify</text>
+      </svg>
+    </div>
+  </div>
+</body>
+</html>
